@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Snake Game</title>
+        
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div class="game-container">
+            <h2>Score: <span id ="scoreDisplay">0</span></h2>
+            <h3>High Score: <span id="highScoreDisplay">0</span></h3>
+            <h3>Total Score: <span id="totalScoreDisplay">0</span></h3>
+            <p id="gameMessage"></p>
+            <div id="gameBoard"></div>
+            <div class="buttons">
+                <button onclick="restartGame()">Replay</button>
+                <button onclick="logout()">Logout</button>
+            </div>
+        </div>
+        <script src="game.js"></script>
+
+    </body>
+</html>

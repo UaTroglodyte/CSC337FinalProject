@@ -1,20 +1,50 @@
-#gameBoard{
-    width: 500px;
-    height: 500px;
-    border: 1px solid black;
-    position: relative;
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial;
+    background-color: #f4f4f4;
 }
 
-#food{
+.game-container {
+    text-align: center;
+}
+
+#gameBoard {
+    width: 500px;
+    height: 500px;
+    border: 2px solid black;
+    position: relative;
+    margin: 20px auto;
+    background: white;
+}
+
+#food {
     width: 20px;
     height: 20px;
     background-color: red;
     position: absolute;
 }
 
-.snakePart{
+.snakePart {
     width: 20px;
     height: 20px;
     background-color: green;
     position: absolute;
+}
+
+.buttons button {
+    margin: 10px;
+    padding: 10px 15px;
+    border: none;
+    background: blue;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.buttons button:hover {
+    background: darkblue;
 }

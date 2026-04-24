@@ -1,9 +1,13 @@
-
-
 const gameBoard = document.getElementById("gameBoard");
+const scoreDisplay = document.getElementById("scoreDisplay");
+const highScoreDisplay = document.getElementById("highScoreDisplay");
+const totalScoreDisplay = document.getElementById("totalScoreDisplay");
+const gameMessage = document.getElementById("gameMessage");
+let gameInterval;
 let snake = [{x:10, y:10}];
-let food = {x:5, y:5};
+let food = generateFood();
 let direction = "right"
+let score = 0;
 
 function updateGameBoard(){
     gameBoard.innerHTML = "";
@@ -19,6 +23,32 @@ function updateGameBoard(){
     foodElm.style.left = food.x *20 +"px";
     foodElm.style.top = food.y *20 +"px";
     gameBoard.appendChild(foodElm);
+}
+
+function generateFood(){
+    let newFood;
+    let onSnake;
+    do {
+        newFood = {
+            x: Math.floor(Math.random() *25),
+            y: Math.floor(Math.random() *25)
+        };
+        onSnake = snake.some(part => part.x === newFood.x && part.y === newFood.y)
+    } while (onSnake);
+    return newFood;
+}
+
+function loadUserStats(){
+    fetch("/user-stats")
+    .then(res => res.json())
+    .then(data => {
+        highScoreDisplay.innerText = data.highScore;
+        totalScoreDisplay.innerText = data.totalScore;
+    });
+}
+
+function updateScoreDisplay() {
+    scoreDisplay.innerText = score;
 }
 
 function moveSnake(){
@@ -39,47 +69,87 @@ function moveSnake(){
     }
     snake.unshift(newHead);
     if (newHead.x === food.x && newHead.y === food.y){
-        food = {
-            x: Math.floor(Math.random() *15),
-            y: Math.floor(Math.random() *15)
-        };
+        score++;
+        updateScoreDisplay();
+        food = generateFood();
     } else{
         snake.pop();
     }
 }
+
+function saveScore() {
+    fetch("/save-score", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ score: score })
+    })
+    .then(res => res.json())
+    .then(data => {
+        highScoreDisplay.innerText = data.highScore;
+        totalScoreDisplay.innerText = data.totalScore;
+        gameMessage.innerText = data.message;
+    });
+}
+
 function checkGameOver(){
     const head = snake[0];
-    if (head.x < 0 || head.y < 0 || head.x > 25 || head.y > 25){
+    if (head.x < 0 || head.y < 0 || head.x > 24 || head.y > 24){
         clearInterval(gameInterval);
-        alert("Game OVer");
+        gameOver = true;
+        saveScore()
+        return;
     }
     for(var i = 1; i < snake.length; i++){
         if (snake[i].x === head.x && snake[i].y === head.y){
             clearInterval(gameInterval);
-            alert("Game Over");
+            gameOver = true;
+            saveScore()
+            return;
         }
     }
 }
 
 function keyPress(event){
-    switch(event.key){
-        case "ArrowUp":
-            direction = "up"
-            break;
-        case "ArrowDown":
-            direction = "down"
-            break;
-        case "ArrowLeft":
-            direction = "left"
-            break;
-        case "ArrowRight":
-            direction = "right"
-            break;
+    if (event.key === "ArrowUp" && direction !== "down") {
+        direction = "up";
+    } else if (event.key === "ArrowDown" && direction !== "up") {
+        direction = "down";
+    } else if (event.key === "ArrowLeft" && direction !== "right") {
+        direction = "left";
+    } else if (event.key === "ArrowRight" && direction !== "left") {
+        direction = "right";
     }
 }
-document.addEventListener("keydown",keyPress);
-const gameInterval = setInterval(() =>{
-    moveSnake();
-    checkGameOver();
+
+function restartGame() {
+    clearInterval(gameInterval);
+    saveScore();
+    snake = [{x:10, y:10}];
+    food = {x:5, y:5};
+    direction = "right";
+    score = 0;
+    gameOver = false;
+    gameMessage.innerText = "";
+
+    updateScoreDisplay();
     updateGameBoard();
-},200);
+    startGame();
+}
+
+function logout() {
+    window.location.href = "/logout";
+}
+
+document.addEventListener("keydown",keyPress);
+function startGame() {
+    gameInterval = setInterval(() => {
+        moveSnake();
+        checkGameOver();
+        updateGameBoard();
+    }, 200);
+}
+loadUserStats();
+startGame();
+updateScoreDisplay();
