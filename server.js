@@ -109,13 +109,33 @@ const server = http.createServer((req, res) => {
                 username: data.username,
                 password: hashPassword(data.password),
                 highScore: 0,
-                scores: []
+                totalScore: 0 // this will act like money
             };
             users.push(newUser);
             writeUsers(users);
             res.writeHead(200, { "Content-Type": "text/plain" });
             res.end("Registration successful!");
         });
+    } else if (req.method === "GET" && req.url == "/user-stats"){
+        const username = getLoggedInUser(req);
+        if (!username) {
+            res.writeHead(401, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: "Not logged in" }));
+            return;
+        }
+        const users = readUsers();
+        const user = users.find(u => u.username === username);
+        if (!user) {
+            res.writeHead(404, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: "User not found" }));
+            return;
+        }
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({
+            username: user.username,
+            highScore: user.highScore,
+            totalScore: user.totalScore
+        }));
     } else if (req.method === "POST" && req.url === "/save-score") {
         const username = getLoggedInUser(req);
         if (!username) {
@@ -137,13 +157,20 @@ const server = http.createServer((req, res) => {
                 res.end("User not found");
                 return;
             }
-            user.scores.push(score);
+            let newHighScore = false;
             if (score > user.highScore) {
                 user.highScore = score;
-            }
+                newHighScore = true;
+            } 
+            user.totalScore += score;
             writeUsers(users);
-            res.writeHead(200, { "Content-Type": "text/plain" });
-            res.end("Score saved");
+            res.writeHead(200, {"Content-Type" : "application/json"});
+            res.end(JSON.stringify({
+                message: newHighScore ? "New High Score" : "Score Saved",
+                highScore: user.highScore,
+                totalScore: user.totalScore,
+                newHighScore: newHighScore
+            }));
         });
     } else if (req.method === "GET" && req.url === "/logout") {
         const cookie = req.headers.cookie;

@@ -2,10 +2,13 @@
   {
     "username": "anthonym7",
     "password": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
-    "highScore": 10,
-    "scores": [
-      10,
-      0
-    ]
+    "highScore": 18,
+    "totalScore": 25
+  },
+  {
+    "username": "test",
+    "password": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "highScore": 26,
+    "totalScore": 65
   }
 ]
