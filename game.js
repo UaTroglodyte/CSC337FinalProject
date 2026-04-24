@@ -1,9 +1,8 @@
-
-
 const gameBoard = document.getElementById("gameBoard");
 let snake = [{x:10, y:10}];
 let food = {x:5, y:5};
 let direction = "right"
+let score = 0;
 
 function updateGameBoard(){
     gameBoard.innerHTML = "";
@@ -43,19 +42,33 @@ function moveSnake(){
             x: Math.floor(Math.random() *15),
             y: Math.floor(Math.random() *15)
         };
+        score++;
     } else{
         snake.pop();
     }
 }
+
+function saveScore() {
+    fetch("/save-score", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ score: score })
+    });
+}
+
 function checkGameOver(){
     const head = snake[0];
     if (head.x < 0 || head.y < 0 || head.x > 25 || head.y > 25){
         clearInterval(gameInterval);
+        saveScore()
         alert("Game OVer");
     }
     for(var i = 1; i < snake.length; i++){
         if (snake[i].x === head.x && snake[i].y === head.y){
             clearInterval(gameInterval);
+            saveScore()
             alert("Game Over");
         }
     }
