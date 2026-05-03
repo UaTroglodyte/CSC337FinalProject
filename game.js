@@ -8,6 +8,7 @@ let snake = [{x:10, y:10}];
 let food = generateFood();
 let direction = "right"
 let score = 0;
+let selectedSkin = "greenSnake";
 
 function updateGameBoard(){
     gameBoard.innerHTML = "";
