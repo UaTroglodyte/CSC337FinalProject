@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -8,7 +8,8 @@ body {
     background-color: #f4f4f4;
 }
 
-.game-container {
+.game-container,
+.shop-container {
     text-align: center;
 }
 
@@ -31,11 +32,27 @@ body {
 .snakePart {
     width: 20px;
     height: 20px;
-    background-color: green;
     position: absolute;
 }
 
-.buttons button {
+.greenSnake {
+    background-color: green;
+}
+
+.blueSnake {
+    background-color: blue;
+}
+
+.purpleSnake {
+    background-color: purple;
+}
+
+.goldSnake {
+    background-color: gold;
+}
+
+.buttons button,
+.skin-card button {
     margin: 10px;
     padding: 10px 15px;
     border: none;
@@ -45,6 +62,29 @@ body {
     cursor: pointer;
 }
 
-.buttons button:hover {
+.buttons button:hover,
+.skin-card button:hover {
     background: darkblue;
+}
+
+.skin-card {
+    background: white;
+    border: 2px solid black;
+    border-radius: 8px;
+    margin: 15px auto;
+    padding: 15px;
+    width: 260px;
+}
+
+.skin-preview {
+    width: 80px;
+    height: 25px;
+    margin: 10px auto;
+    border: 1px solid black;
+}
+
+#gameMessage,
+#shopMessage {
+    min-height: 20px;
+    font-weight: bold;
 }

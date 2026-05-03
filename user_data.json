@@ -3,12 +3,31 @@
     "username": "anthonym7",
     "password": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
     "highScore": 18,
-    "totalScore": 25
+    "totalScore": 25,
+    "ownedSkins": [
+      "greenSnake"
+    ],
+    "selectedSkin": "greenSnake"
   },
   {
     "username": "test",
     "password": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
     "highScore": 26,
-    "totalScore": 65
+    "totalScore": 65,
+    "ownedSkins": [
+      "greenSnake"
+    ],
+    "selectedSkin": "greenSnake"
+  },
+  {
+    "username": "test1",
+    "password": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+    "highScore": 12,
+    "totalScore": 3000,
+    "ownedSkins": [
+      "greenSnake",
+      "blueSnake"
+    ],
+    "selectedSkin": "blueSnake"
   }
 ]

@@ -138,6 +138,10 @@ function restartGame() {
     startGame();
 }
 
+function goToShop() {
+    window.location.href = "/shop";
+}
+
 function logout() {
     window.location.href = "/logout";
 }

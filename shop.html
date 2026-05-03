@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Snake Shop</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div class="shop-container">
+            <h1>Snake Skin Shop</h1>
+            <h3>Total Score: <span id="totalScoreDisplay">0</span></h3>
+            <p id="shopMessage"></p>
+
+            <div class="skin-card">
+                <div class="skin-preview greenSnake"></div>
+                <h3>Green Snake</h3>
+                <p>Free starter skin</p>
+                <button onclick="equipSkin('greenSnake')">Equip</button>
+            </div>
+
+            <div class="skin-card">
+                <div class="skin-preview blueSnake"></div>
+                <h3>Blue Snake</h3>
+                <p>Cost: 10 points</p>
+                <button onclick="buySkin('blueSnake')">Buy</button>
+                <button onclick="equipSkin('blueSnake')">Equip</button>
+            </div>
+
+            <div class="skin-card">
+                <div class="skin-preview purpleSnake"></div>
+                <h3>Purple Snake</h3>
+                <p>Cost: 15 points</p>
+                <button onclick="buySkin('purpleSnake')">Buy</button>
+                <button onclick="equipSkin('purpleSnake')">Equip</button>
+            </div>
+
+            <div class="skin-card">
+                <div class="skin-preview goldSnake"></div>
+                <h3>Gold Snake</h3>
+                <p>Cost: 25 points</p>
+                <button onclick="buySkin('goldSnake')">Buy</button>
+                <button onclick="equipSkin('goldSnake')">Equip</button>
+            </div>
+
+            <div class="buttons">
+                <button onclick="goToGame()">Back to Game</button>
+                <button onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <script src="shop.js"></script>
+    </body>
+</html>

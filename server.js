@@ -36,6 +36,15 @@ function getLoggedInUser(req) {
     return null;
 }
 
+function giveDefaultSkins(user) {
+    if (!user.ownedSkins) {
+        user.ownedSkins = ["greenSnake"];
+    }
+    if (!user.selectedSkin) {
+        user.selectedSkin = "greenSnake";
+    }
+}
+
 const server = http.createServer((req, res) => {
     if (req.method === "GET" && req.url === "/") {
         const html = fs.readFileSync("login.html");
@@ -55,8 +64,22 @@ const server = http.createServer((req, res) => {
         const html = fs.readFileSync("game.html");
         res.writeHead(200, { "Content-Type": "text/html" });
         res.end(html);
+    } else if (req.method === "GET" && req.url === "/shop") {
+        const username = getLoggedInUser(req);
+        if (!username) {
+            res.writeHead(302, { "Location": "/" });
+            res.end();
+            return;
+        }
+        const html = fs.readFileSync("shop.html");
+        res.writeHead(200, { "Content-Type": "text/html" });
+        res.end(html);
     } else if (req.method === "GET" && req.url === "/game.js") {
         const js = fs.readFileSync("game.js");
+        res.writeHead(200, { "Content-Type": "text/javascript" });
+        res.end(js);
+    } else if (req.method === "GET" && req.url === "/shop.js") {
+        const js = fs.readFileSync("shop.js");
         res.writeHead(200, { "Content-Type": "text/javascript" });
         res.end(js);
     } else if (req.method === "GET" && req.url === "/style.css") {
@@ -109,7 +132,9 @@ const server = http.createServer((req, res) => {
                 username: data.username,
                 password: hashPassword(data.password),
                 highScore: 0,
-                totalScore: 0 // this will act like money
+                totalScore: 0,
+                ownedSkins: ["greenSnake"],
+                selectedSkin: "greenSnake"
             };
             users.push(newUser);
             writeUsers(users);
@@ -130,11 +155,15 @@ const server = http.createServer((req, res) => {
             res.end(JSON.stringify({ error: "User not found" }));
             return;
         }
+        giveDefaultSkins(user);
+        writeUsers(users);
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify({
             username: user.username,
             highScore: user.highScore,
-            totalScore: user.totalScore
+            totalScore: user.totalScore,
+            ownedSkins: user.ownedSkins,
+            selectedSkin: user.selectedSkin
         }));
     } else if (req.method === "POST" && req.url === "/save-score") {
         const username = getLoggedInUser(req);
@@ -157,11 +186,12 @@ const server = http.createServer((req, res) => {
                 res.end("User not found");
                 return;
             }
+            giveDefaultSkins(user);
             let newHighScore = false;
             if (score > user.highScore) {
                 user.highScore = score;
                 newHighScore = true;
-            } 
+            }
             user.totalScore += score;
             writeUsers(users);
             res.writeHead(200, {"Content-Type" : "application/json"});
@@ -170,6 +200,112 @@ const server = http.createServer((req, res) => {
                 highScore: user.highScore,
                 totalScore: user.totalScore,
                 newHighScore: newHighScore
+            }));
+        });
+    } else if (req.method === "POST" && req.url === "/buy-skin") {
+        const username = getLoggedInUser(req);
+        if (!username) {
+            res.writeHead(401, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ message: "Not logged in" }));
+            return;
+        }
+
+        let body = "";
+        req.on("data", chunk => {
+            body += chunk.toString();
+        });
+
+        req.on("end", () => {
+            const data = JSON.parse(body);
+            const skin = data.skin;
+
+            const skinPrices = {
+                blueSnake: 10,
+                purpleSnake: 15,
+                goldSnake: 25
+            };
+
+            const users = readUsers();
+            const user = users.find(u => u.username === username);
+
+            if (!user) {
+                res.writeHead(404, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ message: "User not found" }));
+                return;
+            }
+
+            giveDefaultSkins(user);
+
+            if (!skinPrices[skin]) {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ message: "Invalid skin" }));
+                return;
+            }
+
+            if (user.ownedSkins.includes(skin)) {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ message: "You already own this skin" }));
+                return;
+            }
+
+            if (user.totalScore < skinPrices[skin]) {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ message: "Not enough points" }));
+                return;
+            }
+
+            user.totalScore -= skinPrices[skin];
+            user.ownedSkins.push(skin);
+            writeUsers(users);
+
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({
+                message: "Skin bought!",
+                totalScore: user.totalScore,
+                ownedSkins: user.ownedSkins
+            }));
+        });
+    } else if (req.method === "POST" && req.url === "/equip-skin") {
+        const username = getLoggedInUser(req);
+        if (!username) {
+            res.writeHead(401, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ message: "Not logged in" }));
+            return;
+        }
+
+        let body = "";
+        req.on("data", chunk => {
+            body += chunk.toString();
+        });
+
+        req.on("end", () => {
+            const data = JSON.parse(body);
+            const skin = data.skin;
+
+            const users = readUsers();
+            const user = users.find(u => u.username === username);
+
+            if (!user) {
+                res.writeHead(404, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ message: "User not found" }));
+                return;
+            }
+
+            giveDefaultSkins(user);
+
+            if (!user.ownedSkins.includes(skin)) {
+                res.writeHead(400, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ message: "You do not own this skin" }));
+                return;
+            }
+
+            user.selectedSkin = skin;
+            writeUsers(users);
+
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({
+                message: "Skin equipped! Go back to the game to see it.",
+                selectedSkin: user.selectedSkin
             }));
         });
     } else if (req.method === "GET" && req.url === "/logout") {
