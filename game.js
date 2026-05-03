@@ -15,6 +15,7 @@ function updateGameBoard(){
     for(var i = 0; i< snake.length;i++){
         const snakePart = document.createElement("div");
         snakePart.classList.add("snakePart");
+        snakePart.classList.add(selectedSkin);
         snakePart.style.left = snake[i].x *20 + "px";
         snakePart.style.top = snake[i].y *20 + "px";
         gameBoard.appendChild(snakePart);
@@ -45,6 +46,8 @@ function loadUserStats(){
     .then(data => {
         highScoreDisplay.innerText = data.highScore;
         totalScoreDisplay.innerText = data.totalScore;
+        selectedSkin = data.selectedSkin || "greenSnake";
+        updateGameBoard();
     });
 }
 
