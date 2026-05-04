@@ -145,6 +145,9 @@ function restartGame() {
 function goToShop() {
     window.location.href = "/shop";
 }
+function goToLeaderboard() {
+    window.location.href = "/leaderboard";
+}
 
 function logout() {
     window.location.href = "/logout";
