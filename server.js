@@ -324,10 +324,26 @@ const server = http.createServer((req, res) => {
             "Set-Cookie": "sessionId=; Max-Age=0"
         });
         res.end();
+        }  else if (req.method === "GET" && req.url === "/leaderboard") {
+        const username = getLoggedInUser(req);
+        if (!username) {
+            res.writeHead(302, { "Location": "/" });
+            res.end();
+            return;
+        }
+        const html = fs.readFileSync("leaderboard.html");
+        res.writeHead(200, { "Content-Type": "text/html" });
+        res.end(html);
+
+    } else if (req.method === "GET" && req.url === "/leaderboard-data") {
+        const users = readUsers();
+        users.sort((a, b) => b.highScore - a.highScore);
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify(users));
     } else {
-        res.writeHead(404);
-        res.end("Not Found");
-    }
+            res.writeHead(404);
+            res.end("Not Found");
+        }
 });
 
 server.listen(PORT, () => {
