@@ -32,4 +32,4 @@ Files:
 - game.js → game logic
 - style.css → styling
 - user_data.json → stores user accounts and scores
-
+- testing
