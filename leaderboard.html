@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaderboard</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .leaderboard-container {
+            text-align: center;
+            padding: 20px;
+        }
+        .leaderboard-row {
+            width: 400px;
+            margin: 5px auto;
+            padding: 10px 20px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .buttons button {
+            margin: 10px;
+            padding: 10px 15px;
+            border: none;
+            background: blue;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .buttons button:hover {
+            background: darkblue;
+        }
+    </style>
+</head>
+<body>
+    <div class="leaderboard-container">
+        <h1>Leaderboard</h1>
+        <div class="leaderboard-row"><strong>Rank --- Username --- High Score</strong></div>
+        <div id="leaderboardList"></div>
+        <div class="buttons">
+            <button onclick="window.location.href='/game'">Back to Game</button>
+            <button onclick="window.location.href='/logout'">Logout</button>
+        </div>
+    </div>
+    <script>
+        fetch("/leaderboard-data")
+            .then(res => res.json())
+            .then(data => {
+                const list = document.getElementById("leaderboardList");
+                for (let i = 0; i < 50; i++) {
+                    const row = document.createElement("div");
+                    row.classList.add("leaderboard-row");
+                    if (i < data.length) {
+                        row.innerText = (i + 1) + " --- " + data[i].username + " --- " + data[i].highScore;
+                    } else {
+                        row.innerText = (i + 1) + " --- - --- -";
+                    }
+                    list.appendChild(row);
+                }
+            });
+    </script>
+</body>
+</html>
